@@ -30,3 +30,19 @@ Bu repo, `.github/workflows/deploy-pages.yml` ile `main` push'unda otomatik olar
 ## Dosya paylaşımı
 
 Forum arayüzünde IPTV listeleri, M3U/M3U8, APK, ZIP, MP4 ve TXT dosyaları seçilebilir ve konu taslağına eklenebilir. GitHub Pages statik olduğu için dosyalar şu an tarayıcı oturumunda hazırlanır; kalıcı, kullanıcılar arası dosya paylaşımı için Supabase Storage, S3 veya benzeri bir backend ve kimlik doğrulama bağlanmalıdır.
+
+## GitHub Discussions çalışma modeli
+
+FoeumSitem, sunucu kullanmadan GitHub Discussions üzerine çalışan özel bir arayüzdür.
+
+- Forum ve konu listesi herkese açıktır.
+- Konu açmak ve yanıt yazmak için kullanıcı GitHub hesabıyla açılan GitHub Discussion sayfasında oturum açar.
+- Yeni paylaşım ekranı başlık ve metin taslağını panoya kopyalar; ardından seçilen kategori için GitHub Discussion oluşturma ekranını açar.
+- TXT, M3U, M3U8 ve görseller GitHub Discussion editörüne eklenebilir. Büyük APK/ZIP dosyaları için GitHub Releases kullanılması önerilir.
+- Konu içindeki “GitHub'da yanıtla” bağlantısı ilgili Discussion kategorisini açar; yanıtlar GitHub'da kalıcı tutulur.
+- Rozet görünümü ve analitik ekranı statik arayüzde yer alır. Gerçek kullanıcı kimliği ve moderasyon GitHub hesabı, Discussions ve repository ayarları üzerinden yönetilir.
+- Admin panelindeki “GitHub moderasyonu” düğmesi repository Discussions alanına yönlendirir; token statik siteye gömülmediği için güvenli yazma/silme işlemleri GitHub üzerinde yapılır.
+
+### Moderasyon önerisi
+
+Repository sahibi veya maintainer; Discussion kilitleme, yorum silme, spam bildirimi ve kullanıcı engelleme işlemlerini GitHub Discussions arayüzünden yapmalıdır. GitHub Pages tarafında gizli erişim anahtarı tutulmaz.

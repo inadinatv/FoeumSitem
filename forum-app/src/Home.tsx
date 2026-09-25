@@ -39,6 +39,8 @@ import {
   RefreshCw,
   SlidersHorizontal,
   UsersRound,
+  Github,
+  ExternalLink,
   Tv,
   Smartphone,
   Paperclip,
@@ -89,6 +91,22 @@ const categories = [
   { label: "Film & Dizi", count: 37, icon: LayoutDashboard },
   { label: "Destek & İstekler", count: 29, icon: MessageCircle },
 ];
+
+const githubRepo = "https://github.com/inadinatv/FoeumSitem";
+const githubCategorySlugs: Record<string, string> = {
+  "IPTV Listeleri": "general",
+  "APK Paylaşımları": "show-and-tell",
+  "M3U & Oynatıcılar": "q-a",
+  "Film & Dizi": "ideas",
+  "Destek & İstekler": "q-a",
+};
+function githubDiscussionUrl(category: string, create = false) {
+  const slug = githubCategorySlugs[category] ?? "general";
+  return create ? `${githubRepo}/discussions/new?category=${slug}` : `${githubRepo}/discussions/categories/${slug}`;
+}
+function openGithubDiscussion(category: string, create = false) {
+  window.open(githubDiscussionUrl(category, create), "_blank", "noopener,noreferrer");
+}
 
 const initialTopics: Topic[] = [
   {
@@ -272,20 +290,21 @@ export default function Home() {
     toast.success(saved.includes(id) ? "Kaydedilenlerden çıkarıldı" : "Konu kaydedildi");
   };
 
-  const createTopic = () => {
+  const createTopic = async () => {
     if (!newTitle.trim() || !newBody.trim()) {
       toast.error("Başlık ve içerik alanlarını doldurmalısın.");
       return;
     }
-    const topic: Topic = {
-      id: Date.now(), title: newTitle, body: newBody, category: newCategory,
-      author: "Sen", handle: "@ben", initials: "SN", time: "şimdi", replies: 0, views: 1, likes: 0,
-      tags: ["#yeni", `#${newCategory.toLowerCase().replace(/ /g, "-")}`], badge: "Yeni üye", color: "#f1a94b",
-      attachment: attachedFile ? { name: attachedFile.name, size: attachedFile.size, type: attachedFile.type } : undefined,
-    };
-    setTopics((current) => [topic, ...current]);
+    const attachmentNote = attachedFile ? `\n\nEk dosya: ${attachedFile.name} (${(attachedFile.size / 1024 / 1024).toFixed(2)} MB)\nDosyayı, açılan GitHub Discussion ekranında metin alanına sürükleyerek ekleyebilirsin.` : "";
+    const template = `# ${newTitle.trim()}\n\n${newBody.trim()}${attachmentNote}\n\n_Kategori: ${newCategory}_`;
+    try {
+      await navigator.clipboard.writeText(template);
+    } catch {
+      // Clipboard permission is optional; the GitHub editor remains usable.
+    }
     setNewTitle(""); setNewBody(""); setAttachedFile(null); setShowComposer(false);
-    toast.success("Konun topluluğa gönderildi.");
+    openGithubDiscussion(newCategory, true);
+    toast.success("Paylaşım taslağı kopyalandı. GitHub Discussion ekranında yapıştırıp dosyanı ekleyebilirsin.");
   };
 
   return (
@@ -335,7 +354,7 @@ export default function Home() {
                 <div>
                   <div className="eyebrow"><span className="status-dot" />TOPLULUK CANLI</div>
                   <h1>IPTV dünyası <span>burada.</span></h1>
-                  <p>IPTV listelerini, APK uygulamalarını ve oynatıcı rehberlerini toplulukla paylaş.</p>
+                  <p>IPTV listelerini, APK uygulamalarını ve oynatıcı rehberlerini toplulukla paylaş.</p><div className="github-mode-note"><Github size={14} /><span>Konular ve yanıtlar GitHub Discussions üzerinde kalıcı olarak saklanır.</span><button onClick={() => openGithubDiscussion("IPTV Listeleri")}>Discussion'ları gör <ExternalLink size={12} /></button></div>
                 </div>
                 <div className="welcome-actions"><button className="secondary-button share-button" onClick={() => setShowComposer(true)}><FileUp size={17} />Dosya paylaş</button><button className="primary-button" onClick={() => setShowComposer(true)}><Plus size={18} />Yeni paylaşım</button></div>
               </section>
@@ -366,8 +385,8 @@ export default function Home() {
 
       <footer className="mobile-bottom-nav"><button className="active"><MessageCircle size={19} /><span>Forum</span></button><button onClick={() => setActiveNav("Keşfet")}><TrendingUp size={19} /><span>Keşfet</span></button><button onClick={() => setShowComposer(true)} className="mobile-add"><Plus size={21} /></button><button onClick={() => setActiveNav("Rozetler")}><Trophy size={19} /><span>Rozetler</span></button><button onClick={() => setShowProfile(true)}><Avatar initials="YA" color="#7c5cff" small /><span>Profil</span></button></footer>
 
-      {showComposer && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowComposer(false)}><div className="composer-modal"><div className="modal-heading"><div><span className="eyebrow">TOPLULUĞA KATIL</span><h2>Yeni konu oluştur</h2></div><button className="close-button" onClick={() => setShowComposer(false)}><X size={19} /></button></div><label>Başlık<input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Konunu tek cümlede anlat..." /></label><label>Kanal<select value={newCategory} onChange={(e) => setNewCategory(e.target.value)}>{categories.slice(1).map((category) => <option key={category.label}>{category.label}</option>)}</select></label><label>İçerik<textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder="Listeyi, APK bilgisini veya destek talebini paylaş..." rows={5} /></label><div className="file-upload-box"><div><Paperclip size={18} /><span><strong>{attachedFile ? attachedFile.name : "Dosya ekle"}</strong><small>{attachedFile ? `${(attachedFile.size / 1024 / 1024).toFixed(2)} MB · paylaşımına eklenecek` : "M3U, M3U8, APK, ZIP, MP4 veya TXT · maks. 100 MB"}</small></span></div><label className="file-select-button">{attachedFile ? "Değiştir" : "Dosya seç"}<input type="file" accept=".m3u,.m3u8,.apk,.zip,.rar,.mp4,.txt" onChange={(event) => setAttachedFile(event.target.files?.[0] ?? null)} /></label></div><p className="upload-note"><Lock size={12} /> GitHub Pages sürümünde dosya seçimi tarayıcıda hazırlanır; kalıcı topluluk depolaması için Supabase/S3 backend bağlantısı gerekir.</p><div className="composer-footer"><span><CircleHelp size={15} /> Saygılı ve yapıcı kalalım.</span><button className="primary-button" onClick={createTopic}><PenLine size={16} />Konuyu yayınla</button></div></div></div>}
-      {selectedTopic && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setSelectedTopic(null)}><div className="topic-modal"><div className="modal-heading"><div className="topic-modal-meta"><BadgePill name={selectedTopic.category} /><span>{selectedTopic.time}</span></div><button className="close-button" onClick={() => setSelectedTopic(null)}><X size={19} /></button></div><h2>{selectedTopic.title}</h2><div className="author-row"><Avatar initials={selectedTopic.initials} color={selectedTopic.color} small /><div><strong>{selectedTopic.author}</strong><span>{selectedTopic.handle} · <BadgePill name={selectedTopic.badge} /></span></div></div><p className="topic-modal-body">{selectedTopic.body}</p><div className="topic-modal-tags">{selectedTopic.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="modal-actions"><button className={liked.includes(selectedTopic.id) ? "liked" : ""} onClick={() => toggleLike(selectedTopic.id)}><ThumbsUp size={17} />{selectedTopic.likes + (liked.includes(selectedTopic.id) ? 1 : 0)} beğeni</button><button onClick={() => toast("Yanıt editörü yakında aktif olacak.")}><MessageCircle size={17} />{selectedTopic.replies} yanıt</button><button onClick={() => toggleSave(selectedTopic.id)}><Bookmark size={17} />Kaydet</button></div><div className="reply-placeholder"><Avatar initials="YA" color="#7c5cff" small /><input placeholder="Bu konuya yanıt yaz..." onClick={() => toast("Yanıt editörü yakında aktif olacak.")} /></div></div></div>}
+      {showComposer && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowComposer(false)}><div className="composer-modal"><div className="modal-heading"><div><span className="eyebrow">TOPLULUĞA KATIL</span><h2>Yeni konu oluştur</h2></div><button className="close-button" onClick={() => setShowComposer(false)}><X size={19} /></button></div><label>Başlık<input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Konunu tek cümlede anlat..." /></label><label>Kanal<select value={newCategory} onChange={(e) => setNewCategory(e.target.value)}>{categories.slice(1).map((category) => <option key={category.label}>{category.label}</option>)}</select></label><label>İçerik<textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder="Listeyi, APK bilgisini veya destek talebini paylaş..." rows={5} /></label><div className="file-upload-box"><div><Paperclip size={18} /><span><strong>{attachedFile ? attachedFile.name : "Dosya ekle"}</strong><small>{attachedFile ? `${(attachedFile.size / 1024 / 1024).toFixed(2)} MB · paylaşımına eklenecek` : "M3U, M3U8, APK, ZIP, MP4 veya TXT · maks. 100 MB"}</small></span></div><label className="file-select-button">{attachedFile ? "Değiştir" : "Dosya seç"}<input type="file" accept=".m3u,.m3u8,.apk,.zip,.rar,.mp4,.txt" onChange={(event) => setAttachedFile(event.target.files?.[0] ?? null)} /></label></div><p className="upload-note"><Github size={12} /> Dosya seçtikten sonra GitHub Discussion ekranında dosyayı da ekle; paylaşım ve yanıtlar GitHub hesabına bağlanır.</p><div className="composer-footer"><span><CircleHelp size={15} /> Saygılı ve yapıcı kalalım.</span><button className="primary-button" onClick={createTopic}><Github size={16} />GitHub'da yayınla</button></div></div></div>}
+      {selectedTopic && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setSelectedTopic(null)}><div className="topic-modal"><div className="modal-heading"><div className="topic-modal-meta"><BadgePill name={selectedTopic.category} /><span>{selectedTopic.time}</span></div><button className="close-button" onClick={() => setSelectedTopic(null)}><X size={19} /></button></div><h2>{selectedTopic.title}</h2><div className="author-row"><Avatar initials={selectedTopic.initials} color={selectedTopic.color} small /><div><strong>{selectedTopic.author}</strong><span>{selectedTopic.handle} · <BadgePill name={selectedTopic.badge} /></span></div></div><p className="topic-modal-body">{selectedTopic.body}</p><div className="topic-modal-tags">{selectedTopic.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="modal-actions"><button className={liked.includes(selectedTopic.id) ? "liked" : ""} onClick={() => toggleLike(selectedTopic.id)}><ThumbsUp size={17} />{selectedTopic.likes + (liked.includes(selectedTopic.id) ? 1 : 0)} beğeni</button><button onClick={() => openGithubDiscussion(selectedTopic.category)}><MessageCircle size={17} />GitHub'da yanıtla</button><button onClick={() => toggleSave(selectedTopic.id)}><Bookmark size={17} />Kaydet</button></div><div className="reply-placeholder"><Avatar initials="YA" color="#7c5cff" small /><input placeholder="GitHub Discussion üzerinde yanıt yaz..." onClick={() => openGithubDiscussion(selectedTopic.category)} /><button className="secondary-button" onClick={() => openGithubDiscussion(selectedTopic.category)}><ExternalLink size={14} />Aç</button></div></div></div>}
       {showProfile && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowProfile(false)}><div className="profile-modal"><div className="profile-cover" /><button className="close-button profile-close" onClick={() => setShowProfile(false)}><X size={19} /></button><div className="profile-modal-content"><Avatar initials="YA" color="#7c5cff" /><h2>Yasin A.</h2><span className="muted">@yasin · Film & Dizi topluluk üyesi</span><div className="profile-stats"><div><strong>24</strong><span>konu</span></div><div><strong>148</strong><span>yanıt</span></div><div><strong>248</strong><span>XP</span></div></div><div className="profile-badges"><h3>Kazanılan rozetler</h3>{badgeList.map(({ icon: Icon, name, detail, tone }) => <div className="profile-badge-row" key={name}><span className={`mini-badge ${tone}`}><Icon size={16} /></span><span><strong>{name}</strong><small>{detail}</small></span><CheckCircle2 size={17} className="check-icon" /></div>)}</div><button className="secondary-button" onClick={() => { setShowProfile(false); setActiveNav("Admin"); }}>Admin panelini görüntüle <ShieldCheck size={16} /></button></div></div></div>}
     </div>
   );
@@ -496,7 +515,7 @@ function AdminPanel() {
   };
 
   return <section className="special-page admin-page">
-    <div className="admin-header"><div><div className="eyebrow"><ShieldCheck size={15} />YÖNETİM MERKEZİ</div><h1>Topluluğu yönet</h1><p className="special-lead">Moderasyon, üyeler ve içerik sağlığı tek ekranda.</p></div><span className="admin-status"><span className="status-dot" /> Sistemler normal</span></div>
+    <div className="admin-header"><div><div className="eyebrow"><ShieldCheck size={15} />YÖNETİM MERKEZİ</div><h1>Topluluğu yönet</h1><p className="special-lead">Moderasyon, üyeler ve içerik sağlığı tek ekranda.</p></div><div className="admin-header-actions"><button className="secondary-button" onClick={() => openGithubDiscussion("IPTV Listeleri")}><Github size={15} />GitHub moderasyonu</button><span className="admin-status"><span className="status-dot" /> Sistemler normal</span></div></div>
 
     <div className="admin-stats"><div><span>İncelenecek rapor</span><strong>08</strong><small>son 24 saatte +2</small></div><div><span>Aktif üye</span><strong>2.841</strong><small className="positive">+12.4% bu hafta</small></div><div><span>Toplam konu</span><strong>4.892</strong><small className="positive">+46 bugün</small></div><div><span>Yanıt süresi</span><strong>6 dk</strong><small className="positive">hedef içinde</small></div></div>
 
