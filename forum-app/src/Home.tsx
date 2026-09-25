@@ -34,10 +34,14 @@ import {
   BarChart3,
   Download,
   FileSpreadsheet,
+  FileUp,
   Filter,
   RefreshCw,
   SlidersHorizontal,
   UsersRound,
+  Tv,
+  Smartphone,
+  Paperclip,
 } from "lucide-react";
 import {
   Area,
@@ -74,23 +78,24 @@ type Topic = {
   solved?: boolean;
   badge: string;
   color: string;
+  attachment?: { name: string; size: number; type: string };
 };
 
 const categories = [
-  { label: "Tüm konular", count: 248, icon: Hash },
-  { label: "Maç sohbeti", count: 86, icon: Flame },
-  { label: "Transfer merkezi", count: 54, icon: Zap },
-  { label: "Crypto & Web3", count: 42, icon: Sparkles },
-  { label: "App Crypto 24", count: 37, icon: LayoutDashboard },
-  { label: "Off-topic", count: 29, icon: MessageCircle },
+  { label: "Tüm paylaşımlar", count: 248, icon: Hash },
+  { label: "IPTV Listeleri", count: 86, icon: Tv },
+  { label: "APK Paylaşımları", count: 54, icon: Smartphone },
+  { label: "M3U & Oynatıcılar", count: 42, icon: Zap },
+  { label: "Film & Dizi", count: 37, icon: LayoutDashboard },
+  { label: "Destek & İstekler", count: 29, icon: MessageCircle },
 ];
 
 const initialTopics: Topic[] = [
   {
     id: 1,
-    title: "Derbi gecesi: maçın kırılma anı sizce neydi?",
-    body: "İlk yarıdaki pres ve ikinci yarıda yapılan değişiklikler maçın seyrini tamamen değiştirdi. Siz hangi dakikayı dönüm noktası olarak görüyorsunuz?",
-    category: "Maç sohbeti",
+    title: "Güncel IPTV listesi: yerli ve yabancı kanallar",
+    body: "Güncel M3U listesini ve çalışan kanal gruplarını bu başlık altında paylaşalım. Listeyi kullanmadan önce cihazınızda yedek almayı unutmayın.",
+    category: "IPTV Listeleri",
     author: "Mert Yılmaz",
     handle: "@merty",
     initials: "MY",
@@ -106,9 +111,9 @@ const initialTopics: Topic[] = [
   },
   {
     id: 2,
-    title: "Bu yazın en iyi transferi kim olacak? Erken tahminler",
-    body: "Scout raporlarınızı, maaş dengelerini ve takım ihtiyaçlarını aynı başlıkta toplayalım. Kaynaklı yorumlarınızı bekliyorum.",
-    category: "Transfer merkezi",
+    title: "Android TV için en stabil IPTV uygulamaları",
+    body: "Android TV, telefon ve TV Box üzerinde deneyip memnun kaldığınız uygulamaları sürüm bilgisiyle paylaşın.",
+    category: "APK Paylaşımları",
     author: "Ece Kaya",
     handle: "@ecek",
     initials: "EK",
@@ -123,9 +128,9 @@ const initialTopics: Topic[] = [
   },
   {
     id: 3,
-    title: "Yeni başlayanlar için cüzdan güvenliği: 7 temel kural",
-    body: "Seed phrase, donanım cüzdanı ve ağ ücretleri konusunda herkesin bilmesi gereken kısa bir kontrol listesi hazırladım.",
-    category: "Crypto & Web3",
+    title: "M3U ve M3U8 listesi nasıl eklenir? Başlangıç rehberi",
+    body: "TiviMate, OTT Navigator ve benzeri oynatıcılara liste ekleme adımlarını ekran görüntüleriyle anlatalım.",
+    category: "M3U & Oynatıcılar",
     author: "Alp Demir",
     handle: "@alpchain",
     initials: "AD",
@@ -140,9 +145,9 @@ const initialTopics: Topic[] = [
   },
   {
     id: 4,
-    title: "App Crypto 24 için hangi özelliği önce ekleyelim?",
-    body: "Topluluğun ürün yol haritasına katkı vermesini istiyoruz. Bildirimler, kişiselleştirilmiş akış ve takım odaları arasında oy verelim.",
-    category: "App Crypto 24",
+    title: "Inadına TV Forum için hangi özellik önce gelsin?",
+    body: "Kullanıcıların IPTV listesi, APK ve oynatıcı rehberlerini daha kolay bulabilmesi için önerilerinizi bekliyoruz.",
+    category: "Film & Dizi",
     author: "Selin Aydın",
     handle: "@selinapp",
     initials: "SA",
@@ -156,9 +161,9 @@ const initialTopics: Topic[] = [
   },
   {
     id: 5,
-    title: "Gece vardiyası burada mı? Serbest sohbet alanı",
-    body: "Günün gündeminden bağımsız, topluluğun tanışması ve sohbet etmesi için açık alan. Yeni gelenlere hoş geldin deyin.",
-    category: "Off-topic",
+    title: "Çalışmayan kanal veya APK için destek merkezi",
+    body: "Bağlantı, liste veya uygulama sorununuzu paylaşın; topluluk deneyimleriyle birlikte çözelim.",
+    category: "Destek & İstekler",
     author: "Bora Çetin",
     handle: "@borac",
     initials: "BÇ",
@@ -205,11 +210,11 @@ const memberRows = [
 ];
 
 const channelActivity = [
-  { name: "Maç sohbeti", topics: 86, replies: 624, color: "#8d72ff" },
-  { name: "Transfer merkezi", topics: 54, replies: 418, color: "#ef6b8a" },
-  { name: "Crypto & Web3", topics: 42, replies: 302, color: "#33c9a5" },
-  { name: "App Crypto 24", topics: 37, replies: 276, color: "#f1bd61" },
-  { name: "Off-topic", topics: 29, replies: 188, color: "#4e9bff" },
+  { name: "IPTV Listeleri", topics: 86, replies: 624, color: "#8d72ff" },
+  { name: "APK Paylaşımları", topics: 54, replies: 418, color: "#ef6b8a" },
+  { name: "M3U & Oynatıcılar", topics: 42, replies: 302, color: "#33c9a5" },
+  { name: "Film & Dizi", topics: 37, replies: 276, color: "#f1bd61" },
+  { name: "Destek & İstekler", topics: 29, replies: 188, color: "#4e9bff" },
 ];
 
 const userSegments = [
@@ -243,7 +248,8 @@ export default function Home() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newBody, setNewBody] = useState("");
-  const [newCategory, setNewCategory] = useState("Maç sohbeti");
+  const [newCategory, setNewCategory] = useState("IPTV Listeleri");
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
 
   const filteredTopics = useMemo(() => {
     const result = topics.filter((topic) => {
@@ -274,10 +280,11 @@ export default function Home() {
     const topic: Topic = {
       id: Date.now(), title: newTitle, body: newBody, category: newCategory,
       author: "Sen", handle: "@ben", initials: "SN", time: "şimdi", replies: 0, views: 1, likes: 0,
-      tags: ["#yeni"], badge: "Yeni üye", color: "#f1a94b",
+      tags: ["#yeni", `#${newCategory.toLowerCase().replace(/ /g, "-")}`], badge: "Yeni üye", color: "#f1a94b",
+      attachment: attachedFile ? { name: attachedFile.name, size: attachedFile.size, type: attachedFile.type } : undefined,
     };
     setTopics((current) => [topic, ...current]);
-    setNewTitle(""); setNewBody(""); setShowComposer(false);
+    setNewTitle(""); setNewBody(""); setAttachedFile(null); setShowComposer(false);
     toast.success("Konun topluluğa gönderildi.");
   };
 
@@ -286,11 +293,11 @@ export default function Home() {
       <header className="topbar">
         <div className="brand" onClick={() => { setActiveNav("Forum"); setActiveCategory("Tüm konular"); }}>
           <div className="brand-mark"><Zap size={18} fill="currentColor" /></div>
-          <div><strong>MACWEB</strong><span>COMMUNITY</span></div>
+          <div><strong>INADINA TV</strong><span>FORUM</span></div>
         </div>
         <div className="global-search">
           <Search size={18} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Konularda ara..." />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="IPTV, APK veya M3U ara..." />
           <kbd>⌘ K</kbd>
         </div>
         <div className="top-actions">
@@ -327,10 +334,10 @@ export default function Home() {
               <section className="welcome-row">
                 <div>
                   <div className="eyebrow"><span className="status-dot" />TOPLULUK CANLI</div>
-                  <h1>Günün gündemi <span>burada.</span></h1>
-                  <p>Fikirlerini paylaş, sohbetlere katıl ve topluluğun nabzını tut.</p>
+                  <h1>IPTV dünyası <span>burada.</span></h1>
+                  <p>IPTV listelerini, APK uygulamalarını ve oynatıcı rehberlerini toplulukla paylaş.</p>
                 </div>
-                <button className="primary-button" onClick={() => setShowComposer(true)}><Plus size={18} />Yeni konu</button>
+                <div className="welcome-actions"><button className="secondary-button share-button" onClick={() => setShowComposer(true)}><FileUp size={17} />Dosya paylaş</button><button className="primary-button" onClick={() => setShowComposer(true)}><Plus size={18} />Yeni paylaşım</button></div>
               </section>
 
               <section className="stats-strip">
@@ -359,15 +366,15 @@ export default function Home() {
 
       <footer className="mobile-bottom-nav"><button className="active"><MessageCircle size={19} /><span>Forum</span></button><button onClick={() => setActiveNav("Keşfet")}><TrendingUp size={19} /><span>Keşfet</span></button><button onClick={() => setShowComposer(true)} className="mobile-add"><Plus size={21} /></button><button onClick={() => setActiveNav("Rozetler")}><Trophy size={19} /><span>Rozetler</span></button><button onClick={() => setShowProfile(true)}><Avatar initials="YA" color="#7c5cff" small /><span>Profil</span></button></footer>
 
-      {showComposer && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowComposer(false)}><div className="composer-modal"><div className="modal-heading"><div><span className="eyebrow">TOPLULUĞA KATIL</span><h2>Yeni konu oluştur</h2></div><button className="close-button" onClick={() => setShowComposer(false)}><X size={19} /></button></div><label>Başlık<input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Konunu tek cümlede anlat..." /></label><label>Kanal<select value={newCategory} onChange={(e) => setNewCategory(e.target.value)}>{categories.slice(1).map((category) => <option key={category.label}>{category.label}</option>)}</select></label><label>İçerik<textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder="Düşüncelerini, sorunu veya hikâyeni paylaş..." rows={5} /></label><div className="composer-footer"><span><CircleHelp size={15} /> Saygılı ve yapıcı kalalım.</span><button className="primary-button" onClick={createTopic}><PenLine size={16} />Konuyu yayınla</button></div></div></div>}
+      {showComposer && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowComposer(false)}><div className="composer-modal"><div className="modal-heading"><div><span className="eyebrow">TOPLULUĞA KATIL</span><h2>Yeni konu oluştur</h2></div><button className="close-button" onClick={() => setShowComposer(false)}><X size={19} /></button></div><label>Başlık<input autoFocus value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Konunu tek cümlede anlat..." /></label><label>Kanal<select value={newCategory} onChange={(e) => setNewCategory(e.target.value)}>{categories.slice(1).map((category) => <option key={category.label}>{category.label}</option>)}</select></label><label>İçerik<textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder="Listeyi, APK bilgisini veya destek talebini paylaş..." rows={5} /></label><div className="file-upload-box"><div><Paperclip size={18} /><span><strong>{attachedFile ? attachedFile.name : "Dosya ekle"}</strong><small>{attachedFile ? `${(attachedFile.size / 1024 / 1024).toFixed(2)} MB · paylaşımına eklenecek` : "M3U, M3U8, APK, ZIP, MP4 veya TXT · maks. 100 MB"}</small></span></div><label className="file-select-button">{attachedFile ? "Değiştir" : "Dosya seç"}<input type="file" accept=".m3u,.m3u8,.apk,.zip,.rar,.mp4,.txt" onChange={(event) => setAttachedFile(event.target.files?.[0] ?? null)} /></label></div><p className="upload-note"><Lock size={12} /> GitHub Pages sürümünde dosya seçimi tarayıcıda hazırlanır; kalıcı topluluk depolaması için Supabase/S3 backend bağlantısı gerekir.</p><div className="composer-footer"><span><CircleHelp size={15} /> Saygılı ve yapıcı kalalım.</span><button className="primary-button" onClick={createTopic}><PenLine size={16} />Konuyu yayınla</button></div></div></div>}
       {selectedTopic && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setSelectedTopic(null)}><div className="topic-modal"><div className="modal-heading"><div className="topic-modal-meta"><BadgePill name={selectedTopic.category} /><span>{selectedTopic.time}</span></div><button className="close-button" onClick={() => setSelectedTopic(null)}><X size={19} /></button></div><h2>{selectedTopic.title}</h2><div className="author-row"><Avatar initials={selectedTopic.initials} color={selectedTopic.color} small /><div><strong>{selectedTopic.author}</strong><span>{selectedTopic.handle} · <BadgePill name={selectedTopic.badge} /></span></div></div><p className="topic-modal-body">{selectedTopic.body}</p><div className="topic-modal-tags">{selectedTopic.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><div className="modal-actions"><button className={liked.includes(selectedTopic.id) ? "liked" : ""} onClick={() => toggleLike(selectedTopic.id)}><ThumbsUp size={17} />{selectedTopic.likes + (liked.includes(selectedTopic.id) ? 1 : 0)} beğeni</button><button onClick={() => toast("Yanıt editörü yakında aktif olacak.")}><MessageCircle size={17} />{selectedTopic.replies} yanıt</button><button onClick={() => toggleSave(selectedTopic.id)}><Bookmark size={17} />Kaydet</button></div><div className="reply-placeholder"><Avatar initials="YA" color="#7c5cff" small /><input placeholder="Bu konuya yanıt yaz..." onClick={() => toast("Yanıt editörü yakında aktif olacak.")} /></div></div></div>}
-      {showProfile && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowProfile(false)}><div className="profile-modal"><div className="profile-cover" /><button className="close-button profile-close" onClick={() => setShowProfile(false)}><X size={19} /></button><div className="profile-modal-content"><Avatar initials="YA" color="#7c5cff" /><h2>Yasin A.</h2><span className="muted">@yasin · App Crypto 24 topluluk üyesi</span><div className="profile-stats"><div><strong>24</strong><span>konu</span></div><div><strong>148</strong><span>yanıt</span></div><div><strong>248</strong><span>XP</span></div></div><div className="profile-badges"><h3>Kazanılan rozetler</h3>{badgeList.map(({ icon: Icon, name, detail, tone }) => <div className="profile-badge-row" key={name}><span className={`mini-badge ${tone}`}><Icon size={16} /></span><span><strong>{name}</strong><small>{detail}</small></span><CheckCircle2 size={17} className="check-icon" /></div>)}</div><button className="secondary-button" onClick={() => { setShowProfile(false); setActiveNav("Admin"); }}>Admin panelini görüntüle <ShieldCheck size={16} /></button></div></div></div>}
+      {showProfile && <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && setShowProfile(false)}><div className="profile-modal"><div className="profile-cover" /><button className="close-button profile-close" onClick={() => setShowProfile(false)}><X size={19} /></button><div className="profile-modal-content"><Avatar initials="YA" color="#7c5cff" /><h2>Yasin A.</h2><span className="muted">@yasin · Film & Dizi topluluk üyesi</span><div className="profile-stats"><div><strong>24</strong><span>konu</span></div><div><strong>148</strong><span>yanıt</span></div><div><strong>248</strong><span>XP</span></div></div><div className="profile-badges"><h3>Kazanılan rozetler</h3>{badgeList.map(({ icon: Icon, name, detail, tone }) => <div className="profile-badge-row" key={name}><span className={`mini-badge ${tone}`}><Icon size={16} /></span><span><strong>{name}</strong><small>{detail}</small></span><CheckCircle2 size={17} className="check-icon" /></div>)}</div><button className="secondary-button" onClick={() => { setShowProfile(false); setActiveNav("Admin"); }}>Admin panelini görüntüle <ShieldCheck size={16} /></button></div></div></div>}
     </div>
   );
 }
 
 function TopicCard({ topic, liked, saved, onLike, onSave, onOpen }: { topic: Topic; liked: boolean; saved: boolean; onLike: () => void; onSave: () => void; onOpen: () => void }) {
-  return <article className="topic-card"><div className="topic-main"><button className="topic-click-area" onClick={onOpen}><div className="topic-topline">{topic.pinned && <span className="topic-flag pinned"><Pin size={12} />Sabitlendi</span>}{topic.hot && <span className="topic-flag hot"><Flame size={12} />Trend</span>}{topic.solved && <span className="topic-flag solved"><CheckCircle2 size={12} />Çözüldü</span>}<span className="topic-category">{topic.category}</span></div><h3>{topic.title}</h3><p>{topic.body}</p><div className="topic-tags">{topic.tags.map((tag) => <span key={tag}>{tag}</span>)}</div></button><div className="author-row"><Avatar initials={topic.initials} color={topic.color} small /><div><strong>{topic.author}</strong><span>{topic.handle} · {topic.time} · <BadgePill name={topic.badge} /></span></div></div></div><div className="topic-side"><div className="topic-metric"><strong>{topic.replies}</strong><span>yanıt</span></div><div className="topic-metric"><strong>{topic.views.toLocaleString("tr-TR")}</strong><span>görüntülenme</span></div><div className="topic-actions"><button className={liked ? "liked" : ""} onClick={onLike} aria-label="Beğen"><ThumbsUp size={16} /><span>{topic.likes + (liked ? 1 : 0)}</span></button><button className={saved ? "saved" : ""} onClick={onSave} aria-label="Kaydet"><Bookmark size={16} /></button><button onClick={() => toast("Konu seçenekleri yakında.")} aria-label="Daha fazla"><MoreHorizontal size={17} /></button></div></div></article>;
+  return <article className="topic-card"><div className="topic-main"><button className="topic-click-area" onClick={onOpen}><div className="topic-topline">{topic.pinned && <span className="topic-flag pinned"><Pin size={12} />Sabitlendi</span>}{topic.hot && <span className="topic-flag hot"><Flame size={12} />Trend</span>}{topic.solved && <span className="topic-flag solved"><CheckCircle2 size={12} />Çözüldü</span>}<span className="topic-category">{topic.category}</span></div><h3>{topic.title}</h3><p>{topic.body}</p><div className="topic-tags">{topic.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>{topic.attachment && <div className="topic-attachment"><Paperclip size={12} /><span>{topic.attachment.name}</span></div>}</button><div className="author-row"><Avatar initials={topic.initials} color={topic.color} small /><div><strong>{topic.author}</strong><span>{topic.handle} · {topic.time} · <BadgePill name={topic.badge} /></span></div></div></div><div className="topic-side"><div className="topic-metric"><strong>{topic.replies}</strong><span>yanıt</span></div><div className="topic-metric"><strong>{topic.views.toLocaleString("tr-TR")}</strong><span>görüntülenme</span></div><div className="topic-actions"><button className={liked ? "liked" : ""} onClick={onLike} aria-label="Beğen"><ThumbsUp size={16} /><span>{topic.likes + (liked ? 1 : 0)}</span></button><button className={saved ? "saved" : ""} onClick={onSave} aria-label="Kaydet"><Bookmark size={16} /></button><button onClick={() => toast("Konu seçenekleri yakında.")} aria-label="Daha fazla"><MoreHorizontal size={17} /></button></div></div></article>;
 }
 
 function BadgeShowcase() {
@@ -406,7 +413,7 @@ function AdminPanel() {
   const [isExporting, setIsExporting] = useState(false);
 
   const chartData = useMemo(() => {
-    const channelWeight = channel === "Tümü" ? 1 : channel === "Maç sohbeti" ? 1.12 : channel === "Transfer merkezi" ? .88 : .74;
+    const channelWeight = channel === "Tümü" ? 1 : channel === "IPTV Listeleri" ? 1.12 : channel === "APK Paylaşımları" ? .88 : .74;
     return activityData[period].map((point) => ({
       ...point,
       replies: Math.round(point.replies * channelWeight),

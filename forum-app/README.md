@@ -22,3 +22,11 @@ Vercel projesi oluştururken **Root Directory** olarak `forum-app` klasörünü 
 ## Üretim için sonraki adım
 
 Bu sürüm etkileşimli frontend prototipidir ve hızlı tasarım/UX doğrulaması için örnek veriler kullanır. Gerçek kullanıcı hesabı, kalıcı konu/yanıt verisi, canlı bildirimler, dosya yükleme ve rol bazlı admin yetkisi için `web-db-user` backend'ini veya Vercel uyumlu bir API + Postgres/Neon/Supabase katmanını bağlayın. İstemci tarafına gizli anahtar koymayın.
+
+## GitHub Pages
+
+Bu repo, `.github/workflows/deploy-pages.yml` ile `main` push'unda otomatik olarak GitHub Pages'e yayınlanır. Vite `base` ayarı `/FoeumSitem/` olarak yapılandırılmıştır.
+
+## Dosya paylaşımı
+
+Forum arayüzünde IPTV listeleri, M3U/M3U8, APK, ZIP, MP4 ve TXT dosyaları seçilebilir ve konu taslağına eklenebilir. GitHub Pages statik olduğu için dosyalar şu an tarayıcı oturumunda hazırlanır; kalıcı, kullanıcılar arası dosya paylaşımı için Supabase Storage, S3 veya benzeri bir backend ve kimlik doğrulama bağlanmalıdır.
