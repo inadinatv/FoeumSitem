@@ -29,7 +29,7 @@ Bu repo, `.github/workflows/deploy-pages.yml` ile `main` push'unda otomatik olar
 
 ## Dosya paylaşımı
 
-Forum arayüzünde IPTV listeleri, M3U/M3U8, APK, ZIP, MP4 ve TXT dosyaları seçilebilir ve konu taslağına eklenebilir. GitHub Pages statik olduğu için dosyalar şu an tarayıcı oturumunda hazırlanır; kalıcı, kullanıcılar arası dosya paylaşımı için Supabase Storage, S3 veya benzeri bir backend ve kimlik doğrulama bağlanmalıdır.
+Forum arayüzünde IPTV listeleri, M3U/M3U8, APK, ZIP, MP4 ve TXT dosyaları seçilebilir ve konu taslağına eklenebilir. GitHub Pages statik olduğu için dosya, açılan GitHub Discussion editörüne kullanıcı tarafından eklenir; böylece kalıcı dosya ve yanıt saklama GitHub üzerinde gerçekleşir. Büyük APK/ZIP dosyaları için GitHub Releases kullanılması önerilir.
 
 ## GitHub Discussions çalışma modeli
 
